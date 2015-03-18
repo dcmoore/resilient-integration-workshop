@@ -20,8 +20,11 @@
   (let [bucket-id (generate-uuid)
         gold-units (rand-int 5)]
     (write-to-csv :excavations [bucket-id gold-units])
-    (json-response {:bucket-id bucket-id
-                    :gold {:units gold-units}})))
+    (if (= 0 gold-units)
+      (json-response {:bucket-id bucket-id
+                      :dirt {:units (rand-int 5)}})
+      (json-response {:bucket-id bucket-id
+                      :gold {:units gold-units}}))))
 
 (defn- store-gold [user-id bucket-id]
   (with-open [in-file (io/reader "users.csv")]
