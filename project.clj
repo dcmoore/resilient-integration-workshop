@@ -1,7 +1,7 @@
 (defproject workshop "0.1.0"
   :description "Crappy service used in resilient integrations workshop"
   :url "https://github.com/dcmoore/workshop"
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
                  [chee "2.0.0"]
                  [clj-stacktrace "0.2.8"]
                  [com.taoensso/timbre "3.2.1"]
@@ -10,8 +10,8 @@
                  [environ "1.0.0"]
                  [org.clojure/data.csv "0.1.2"]
                  [org.clojure/tools.namespace "0.2.7"]
-                 [ring/ring-devel "1.2.0"]
-                 [ring/ring-jetty-adapter "1.2.0"]
+                 [ring/ring-devel "1.3.2"]
+                 [ring/ring-jetty-adapter "1.3.2"]
                  [stencil "0.3.4"]]
   :plugins [[lein-environ "1.0.0"]]
 

@@ -14,10 +14,18 @@
   (not-found {:headers {"Content-Type" "text/json; charset=utf-8"}
               :body "{\"error\": \"Bro, why you trying to hit an endpoint that doesn't exist?\"}"}))
 
+(defn wrap-origin [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc response
+        :headers
+        (merge (:headers response) {"Access-Control-Allow-Origin" "*"})))))
+
 (def base-handler
   (-> application-routes
       log-error
       log-request-and-response
+      wrap-origin
       random-sleep
       random-failure
       wrap-normalize))
