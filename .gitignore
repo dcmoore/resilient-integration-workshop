@@ -1,0 +1,7 @@
+*.csv
+target/
+.lein*
+.nrepl-port
+log/
+pom.xml
+.DS_Store
