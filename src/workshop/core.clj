@@ -26,7 +26,7 @@
   (-> application-routes
       log-error
       log-request-and-response
-      wrap-origin
       random-sleep
       random-failure
+      wrap-origin
       wrap-normalize))
