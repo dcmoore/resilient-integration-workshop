@@ -19,7 +19,8 @@
     (let [response (handler request)]
       (assoc response
         :headers
-        (merge (:headers response) {"Access-Control-Allow-Origin" "*"})))))
+        (merge (:headers response) {"Access-Control-Allow-Origin" "*"
+                                    "Access-Control-Allow-Headers" "Origin, X-Requested-With, Content-Type, Accept"})))))
 
 (def base-handler
   (-> application-routes
