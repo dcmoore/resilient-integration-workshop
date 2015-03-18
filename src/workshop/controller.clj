@@ -32,6 +32,8 @@
       (json-response {:error "cmon bro, you need to register first"}))))
 
 (defn store [request]
+  (spit "users.csv" nil :append true)
+  (spit "excavations.csv" nil :append true)
   (if-let [user-id (:user-id (:query-params request))]
     (if-let [bucket-id (:bucket-id (:query-params request))]
       (store-gold user-id bucket-id)
@@ -57,6 +59,9 @@
       (json-response {:error "You have no stored buckets"}))))
 
 (defn totals [request]
+  (spit "stored-buckets.csv" nil :append true)
+  (spit "users.csv" nil :append true)
+  (spit "excavations.csv" nil :append true)
   (if-let [user-id (:user-id (:query-params request))]
     (read-totals user-id)
     (json-response {:error "Must have 'userId' in query params"})))
