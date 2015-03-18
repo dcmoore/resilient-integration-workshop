@@ -25,8 +25,8 @@
 (def base-handler
   (-> application-routes
       log-error
-      log-request-and-response
       random-sleep
       random-failure
       wrap-origin
-      wrap-normalize))
+      wrap-normalize
+      log-request-and-response))
