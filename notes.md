@@ -106,7 +106,7 @@ goldUnits
 
 
 
-curl -X POST "localhost:4000/v1/register?userName=TestUser"
-curl -X POST "localhost:4000/v1/excavate?userId=21137c38-d176-4574-969c-087ec21f31c8"
-curl -X POST "localhost:4000/v1/store?userId=21137c38-d176-4574-969c-087ec21f31c8&bucketId=e3ae946b-98a6-4484-8cd1-f669d7d73c76"
-curl -X GET "localhost:4000totals?userId=21137c38-d176-4574-969c-087ec21f31c8"
+curl -X POST "https://resilient-integration-workshop.herokuapp.com/v1/register?userName=TestUser"
+curl -X POST "https://resilient-integration-workshop.herokuapp.com/v1/excavate"
+curl -X POST "https://resilient-integration-workshop.herokuapp.com/v1/store?userId=XXXXX&bucketId=XXXXX"
+curl -X GET "https://resilient-integration-workshop.herokuapp.com/v1/totals?userId=XXXXX"
