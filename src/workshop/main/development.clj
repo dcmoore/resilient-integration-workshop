@@ -16,7 +16,7 @@
     wrap-reload))
 
 (defn -main [& args]
-  (config-logger! {:to-standard-out? true :filename "development"})
+  (config-logger! {:to-standard-out? true})
   (reset! -env :dev)
 
   (let [port (Integer/parseInt (or (first args) "4000"))]
