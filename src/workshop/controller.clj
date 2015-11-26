@@ -57,8 +57,12 @@
     (for [bucket-id bucket-ids-for-user]
       (Integer. (or (last (first (csv/read-csv (or (first (filter #(= bucket-id (ffirst (csv/read-csv %))) @excavations)) "")))) "0")))))
 
+(defn bucket-ids-for-user [user-id]
+  (set (map #(last (last (csv/read-csv (or % ""))))
+            (filter #(= user-id (ffirst (csv/read-csv %))) @stored-buckets))))
+
 (defn- read-totals [user-id]
-  (if-let [bucket-ids-for-user (set (map #(last (last (csv/read-csv (or % "")))) (filter #(= user-id (ffirst (csv/read-csv %))) @stored-buckets)))]
+  (if-let [bucket-ids-for-user (bucket-ids-for-user user-id)]
     (json-response {:user-name (get-user-name user-id)
                     :gold-total (get-gold-total bucket-ids-for-user)})
     (json-bad-response {:error "You have no stored buckets"})))
@@ -75,3 +79,11 @@
       (json-response {:user uuid
                       :name user-name}))
     (json-bad-response {:error "Must have 'userName' in query params"})))
+
+(defn bro-stats-dawg [request]
+  (let [user-ids (set (map #(ffirst (csv/read-csv %)) @users))]
+    (if (not (empty? user-ids))
+      (json-response {:users (vec (sort-by :gold-total > (map #(do {:user-name (get-user-name %)
+                                                                    :gold-total (get-gold-total (bucket-ids-for-user %))})
+                                                              user-ids)))})
+      (json-bad-response {:error "Nobody registered yet"}))))
