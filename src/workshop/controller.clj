@@ -13,15 +13,15 @@
 (defn- json-bad-response [body]
   {:status 400 :body body :headers {"Content-Type" "application/json"}})
 
-(def users (atom ""))
-(def excavations (atom ""))
-(def stored-buckets (atom ""))
+(def users (atom []))
+(def excavations (atom []))
+(def stored-buckets (atom []))
 
-(defn write-to-csv [file-name values]
+(defn- write-to-csv [file-name values]
   (case file-name
-    :users (swap! users str (str (apply str (interpose "," values)) "\n"))
-    :excavations (swap! excavations str (str (apply str (interpose "," values)) "\n"))
-    :stored-buckets (swap! stored-buckets str (str (apply str (interpose "," values)) "\n"))))
+    :users (swap! users conj (str (apply str (interpose "," values))))
+    :excavations (swap! excavations conj (str (apply str (interpose "," values))))
+    :stored-buckets (swap! stored-buckets conj (str (apply str (interpose "," values))))))
 
 (defn excavate [request]
   (let [bucket-id (generate-uuid)
@@ -34,8 +34,8 @@
                       :gold {:units gold-units}}))))
 
 (defn- store-gold [user-id bucket-id]
-  (if-let [user-id (ffirst (filter #(= user-id (first %)) (csv/read-csv @users)))]
-    (if-let [bucket-id (ffirst (filter #(= bucket-id (first %)) (csv/read-csv @excavations)))]
+  (if-let [user-id (ffirst (csv/read-csv (or (first (filter #(= user-id (ffirst (csv/read-csv %))) @users)) "")))]
+    (if-let [bucket-id (ffirst (csv/read-csv (or (first (filter #(= bucket-id (ffirst (csv/read-csv %))) @excavations)) "")))]
       (do
         (write-to-csv :stored-buckets [user-id bucket-id])
         {:status 200 :body "true"})
@@ -50,24 +50,23 @@
     (json-bad-response {:error "Must have 'userId' in query params"})))
 
 (defn- get-user-name [user-id]
-  (last (first (filter #(= user-id (first %)) (csv/read-csv @users)))))
+  (last (first (csv/read-csv (or (first (filter #(= user-id (ffirst (csv/read-csv %))) @users)) "")))))
 
-(defn- get-gold-total [registered-buckets]
+(defn- get-gold-total [bucket-ids-for-user]
   (apply +
-    (for [bucket registered-buckets]
-      (let [bucket-id (last bucket)]
-        (Integer. (or (last (first (filter #(= bucket-id (first %)) (csv/read-csv @excavations)))) "0"))))))
+    (for [bucket-id bucket-ids-for-user]
+      (Integer. (or (last (first (csv/read-csv (or (first (filter #(= bucket-id (ffirst (csv/read-csv %))) @excavations)) "")))) "0")))))
 
 (defn- read-totals [user-id]
-  (if-let [registered-buckets (set (filter #(= user-id (first %)) (csv/read-csv @stored-buckets)))]
+  (if-let [bucket-ids-for-user (set (map #(last (last (csv/read-csv (or % "")))) (filter #(= user-id (ffirst (csv/read-csv %))) @stored-buckets)))]
     (json-response {:user-name (get-user-name user-id)
-                    :gold-total (get-gold-total registered-buckets)})
+                    :gold-total (get-gold-total bucket-ids-for-user)})
     (json-bad-response {:error "You have no stored buckets"})))
 
 (defn totals [request]
-  (if-let [user-id (:user-id (:query-params request))]
-    (read-totals user-id)
-    (json-bad-response {:error "Must have 'userId' in query params"})))
+  (if (nil? (get-user-name (:user-id (:query-params request))))
+    (json-bad-response {:error "Must have a registered 'userId' in query params"})
+    (read-totals (:user-id (:query-params request)))))
 
 (defn register [request]
   (if-let [user-name (:user-name (:query-params request))]
