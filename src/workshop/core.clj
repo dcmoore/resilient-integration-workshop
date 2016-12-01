@@ -2,8 +2,9 @@
   (:require
     [workshop.utility.middleware.log :refer [log-error log-request-and-response]]
     [workshop.utility.middleware.failer :refer [random-failure]]
+    [workshop.utility.middleware.passthrough-middleware :refer [right-most-matching-handler]]
     [workshop.utility.middleware.sleeper :refer [random-sleep]]
-    [workshop.v1.routes :refer [v1-handler]]
+    [workshop.v1.routes :refer [v1-handler admin-routes]]
     [compojure.core :refer [defroutes routes context GET]]
     [compojure.route :refer [not-found]]
     [easy-bake-service.middleware.normalize :refer [wrap-normalize]]))
@@ -27,6 +28,7 @@
       log-error
       random-sleep
       random-failure
+      (right-most-matching-handler admin-routes)
       wrap-origin
       wrap-normalize
       log-request-and-response))

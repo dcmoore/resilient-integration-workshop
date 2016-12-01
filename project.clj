@@ -15,7 +15,7 @@
                  [stencil "0.3.4"]]
   :plugins [[lein-environ "1.0.0"]]
 
-  :profiles {:test {:dependencies [[ring-mock "0.1.3"]
+  :profiles {:test {:dependencies [[ring/ring-mock "0.3.0"]
                                    [speclj "3.1.0"]]
                     :plugins [[speclj "3.1.0"]]
                     :resource-paths ["spec/resources" "resources"]

@@ -20,8 +20,7 @@
   (GET "/totals" request (controller/totals request))
   (GET "/totals/" request (controller/totals request))
   (OPTIONS "/totals" request (controller/totals request))
-  (OPTIONS "/totals/" request (controller/totals request))
-  (GET "/bro-stats-dawg" request (controller/bro-stats-dawg request))
-  (GET "/bro-stats-dawg/" request (controller/bro-stats-dawg request))
-  (OPTIONS "/bro-stats-dawg" request (controller/bro-stats-dawg request))
-  (OPTIONS "/bro-stats-dawg/" request (controller/bro-stats-dawg request)))
+  (OPTIONS "/totals/" request (controller/totals request)))
+
+(defroutes admin-routes
+  (GET "/v1/bro-stats-dawg" request (controller/bro-stats-dawg request)))
