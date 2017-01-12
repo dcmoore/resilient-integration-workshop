@@ -23,10 +23,15 @@
     :excavations (swap! excavations conj (str (apply str (interpose "," values))))
     :stored-buckets (swap! stored-buckets conj (str (apply str (interpose "," values))))))
 
+(defn penalize-dirt [units]
+  (if (= 0 units)
+    -100
+    units))
+
 (defn excavate [request]
   (let [bucket-id (generate-uuid)
         gold-units (rand-int 5)]
-    (write-to-csv :excavations [bucket-id gold-units])
+    (write-to-csv :excavations [bucket-id (penalize-dirt gold-units)])
     (if (= 0 gold-units)
       (json-response {:bucket-id bucket-id
                       :dirt {:units (rand-int 5)}})
