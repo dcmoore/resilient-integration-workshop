@@ -23,6 +23,9 @@
     :excavations (swap! excavations conj (str (apply str (interpose "," values))))
     :stored-buckets (swap! stored-buckets conj (str (apply str (interpose "," values))))))
 
+(defn read-from-csv [match-key collection]
+  (csv/read-csv (or (first (filter #(= match-key (ffirst (csv/read-csv %))) collection)) "")))
+
 (defn penalize-dirt [units]
   (if (= 0 units)
     -100
@@ -39,8 +42,8 @@
                       :gold {:units gold-units}}))))
 
 (defn- store-gold [user-id bucket-id]
-  (if-let [user-id (ffirst (csv/read-csv (or (first (filter #(= user-id (ffirst (csv/read-csv %))) @users)) "")))]
-    (if-let [bucket-id (ffirst (csv/read-csv (or (first (filter #(= bucket-id (ffirst (csv/read-csv %))) @excavations)) "")))]
+  (if-let [user-id (ffirst (read-from-csv user-id @users))]
+    (if-let [bucket-id (ffirst (read-from-csv bucket-id @excavations))]
       (do
         (write-to-csv :stored-buckets [user-id bucket-id])
         {:status 200 :body "true"})
@@ -55,12 +58,12 @@
     (json-bad-response {:error "Must have 'userId' in query params"})))
 
 (defn- get-user-name [user-id]
-  (last (first (csv/read-csv (or (first (filter #(= user-id (ffirst (csv/read-csv %))) @users)) "")))))
+  (last (first (read-from-csv user-id @users))))
 
 (defn- get-gold-total [bucket-ids-for-user]
   (apply +
     (for [bucket-id bucket-ids-for-user]
-      (Integer. (or (last (first (csv/read-csv (or (first (filter #(= bucket-id (ffirst (csv/read-csv %))) @excavations)) "")))) "0")))))
+      (Integer. (or (last (first (read-from-csv bucket-id @excavations))) "0")))))
 
 (defn bucket-ids-for-user [user-id]
   (set (map #(last (last (csv/read-csv (or % ""))))
