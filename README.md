@@ -7,3 +7,10 @@ This is an API that is intentionally difficult to integrate with. I use this in 
 ```bash
 lein with-profile development trampoline run $PORT
 ```
+
+-or-
+
+```bash
+docker build -t workshop .
+docker run -p 8085:8085 workshop
+```

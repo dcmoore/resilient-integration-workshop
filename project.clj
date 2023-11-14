@@ -14,7 +14,7 @@
                  [ring/ring-jetty-adapter "1.3.2"]
                  [stencil "0.3.4"]]
   :plugins [[lein-environ "1.0.0"]]
-
+  :aliases {"compile-min" ["do" ["clean"] ["compile"] ["uberjar"]]}
   :profiles {:test {:dependencies [[ring/ring-mock "0.3.0"]
                                    [speclj "3.1.0"]]
                     :plugins [[speclj "3.1.0"]]
@@ -24,6 +24,9 @@
 
              :development {:aot [workshop.main.development]
                            :main workshop.main.development
-                           :env {:env :development}}}
+                           :env {:env :development}}
+             :uberjar {:aot [workshop.main.development]
+                       :main workshop.main.development
+                       :env {:env :development}}}
 
   :min-lein-version "2.0.0")

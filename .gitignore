@@ -5,3 +5,5 @@ target/
 log/
 pom.xml
 .DS_Store
+.clj-kondo/*
+.lsp/*
